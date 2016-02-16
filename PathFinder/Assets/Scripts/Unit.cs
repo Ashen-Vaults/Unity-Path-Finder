@@ -4,11 +4,14 @@ using System.Collections;
 public class Unit : MonoBehaviour
 {
 
+    public delegate void ReachPath();
+    public event ReachPath OnReachedPath;
 
     public Transform target;
     public float speed = 20;
     public Vector3[] path;
-    public Vector3 origDestination; 
+    public Vector3 origDestination;
+    public Vector3 currentWaypoint;
     public int targetIndex; //
 
     public DistanceHeuristic distanceType;
@@ -26,7 +29,14 @@ public class Unit : MonoBehaviour
     {
         distanceFromTarget = Vector3.Distance(transform.position, target.position);
         StartCoroutine(RefreshPath());
-       
+    }
+
+    public void RaiseReachedPath()
+    {
+        if (OnReachedPath != null)
+        {
+            OnReachedPath();
+        }
     }
     public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
     {
@@ -56,7 +66,9 @@ public class Unit : MonoBehaviour
         {
             changePath = false;
             followingPath = true;
-            Vector3 currentWaypoint = path[0];
+
+            if(path[0] != null)
+                currentWaypoint = path[0];
 
             while (true)
             {
@@ -79,8 +91,6 @@ public class Unit : MonoBehaviour
                     followingPath = false;
                     break;
                 }
-
-
 
                 transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
              //   transform.LookAt(path[targetIndex]);  //Looks at the target when they arrive, to make sure they are rotated at  the right direction

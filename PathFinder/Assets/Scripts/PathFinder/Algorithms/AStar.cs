@@ -13,18 +13,9 @@ namespace PathFinder
 
     //    public Transform seeker, target;
 
-        public int tentativeGScore;
-        public PathMananger myMananger;
-        public Stopwatch sw;
+
         public bool distort;
         public AnimationCurve distortion;
-
-        Grid grid;
-
-        void Awake()
-        {
-            grid = GetComponent<Grid>();
-        }
 
         void Update()
         {
@@ -40,21 +31,21 @@ namespace PathFinder
         public override IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, DistanceHeuristic distanceType, bool simplified)
         {
 
-            sw = new Stopwatch();
-            sw.Start();
+            this.myProperties.sw = new Stopwatch();
+            this.myProperties.sw.Start();
 
             #region Init
-            Tile startTile = grid.GetTile(startPos);
-            Tile targetTile = grid.GetTile(targetPos);
+            Node startTile = this.myProperties.myGraph.GetNode(startPos);
+            Node targetTile = this.myProperties.myGraph.GetNode(targetPos);
 
             Vector3[] wayPoints = new Vector3[0];
             bool success = false;
 
             //List<Tile> open = new List<Tile>();
 
-            PriorityQueue<Tile> open = new PriorityQueue<Tile>(this.myProperties.myGrid.Size);
+            PriorityQueue<Node> open = new PriorityQueue<Node>(this.myProperties.myGraph.Size);
 
-            HashSet<Tile> close = new HashSet<Tile>();
+            HashSet<Node> close = new HashSet<Node>();
             open.Enqueue(startTile);  //Add the starting tile to be processed
             #endregion Init
 
@@ -62,14 +53,14 @@ namespace PathFinder
 
                 while (open.Count > 0)
                 {
-                    Tile currentTile = open.Dequeue(); //Set the currentTile to the next elem in open
+                    Node currentTile = open.Dequeue(); //Set the currentTile to the next elem in open
 
                     //If we got to the target, the create the path to it
                     //and exit the loop
                     if (currentTile == targetTile)
                     {
-                        sw.Stop();
-                        //print(sw.ElapsedMilliseconds + " ms");
+                        this.myProperties.sw.Stop();
+                        print("A*: " + this.myProperties.sw.ElapsedMilliseconds + " ms");
                         success = true;
                         break;
                     }
@@ -78,19 +69,19 @@ namespace PathFinder
                     close.Add(currentTile);
 
                     //
-                    foreach (Tile adjacent in grid.GetAdjacents(currentTile))
+                    foreach (Node adjacent in this.myProperties.myGraph.GetAdjacents(currentTile))
                     {
 
                         //Ignore the adjacent neightbor which is already evaluated
                         if (!adjacent.walkable || close.Contains(adjacent)) continue;
 
-                        //Length of this path
-                        tentativeGScore = currentTile.gScore + this.GetDistance(currentTile, adjacent, distanceType);
+                         //Length of this path
+                        this.myProperties.tentativeGScore = currentTile.gScore + this.GetDistance(currentTile, adjacent, distanceType);
 
                         //Find new tiles
-                        if (tentativeGScore < adjacent.gScore || !open.Contains(adjacent))
+                        if (this.myProperties.tentativeGScore < adjacent.gScore || !open.Contains(adjacent))
                         {
-                            adjacent.gScore = tentativeGScore;
+                            adjacent.gScore = this.myProperties.tentativeGScore;
                             adjacent.hScore = this.GetDistance(adjacent, targetTile, distanceType);
                             adjacent.myParent = currentTile;
 
@@ -106,7 +97,7 @@ namespace PathFinder
                 {
                     wayPoints = CreatePath(startTile, targetTile, simplified);
                 }
-                myMananger.DoneProcessing(wayPoints, success);
+                this.myProperties.myMananger.DoneProcessing(wayPoints, success);
             //}
         }
 
@@ -115,10 +106,10 @@ namespace PathFinder
         /// </summary>
         /// <param name="startTile"></param>
         /// <param name="endTile"></param>
-        public override Vector3[] CreatePath(Tile startTile, Tile endTile, bool simplified)
+        public override Vector3[] CreatePath(Node startTile, Node endTile, bool simplified)
         {
-            List<Tile> path = new List<Tile>();
-            Tile currentTile = endTile;
+            List<Node> path = new List<Node>();
+            Node currentTile = endTile;
 
             //Constructs the path by starting at the target position
             //and getting the parent of each tile until it gets to the start
@@ -133,7 +124,7 @@ namespace PathFinder
             return simplifiedPath;
         }
 
-        Vector3[] Simplify(List<Tile> _path, bool _simplifyPath, bool _distort)
+        Vector3[] Simplify(List<Node> _path, bool _simplifyPath, bool _distort)
         {
             List<Vector3> wayPoints = new List<Vector3>();
                 Vector2 direction = Vector2.zero;
@@ -162,7 +153,7 @@ namespace PathFinder
         }
 
 
-        Vector3[] Distort(List<Tile> _path)
+        Vector3[] Distort(List<Node> _path)
         {
             List<Vector3> wayPoints = new List<Vector3>();
 
@@ -174,12 +165,12 @@ namespace PathFinder
             return wayPoints.ToArray();
         }
 
-        void SmoothPath(List<Tile> _path)
+        void SmoothPath(List<Node> _path)
         {
             int start = 0;
             int next = 1;
-            Tile _start = _path[start];
-            Tile _end = _path[next];
+            Node _start = _path[start];
+            Node _end = _path[next];
 
             while (_end != _path[_path.Count - 1])
             {
@@ -204,7 +195,7 @@ namespace PathFinder
         /// <param name="_currentTile"></param>
         /// <param name="_endTile"></param>
         /// <returns></returns>
-        public int GetDistance(Tile _currentTile, Tile _endTile, DistanceHeuristic _distanceType)
+        public int GetDistance(Node _currentTile, Node _endTile, DistanceHeuristic _distanceType)
         {
             int dx = Mathf.Abs(_currentTile.gridX - _endTile.gridX);
             int dy = Mathf.Abs(_currentTile.gridY - _endTile.gridY);

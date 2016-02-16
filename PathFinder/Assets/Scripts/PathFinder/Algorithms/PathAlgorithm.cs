@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System;
 
 namespace PathFinder
@@ -8,6 +9,12 @@ namespace PathFinder
     public abstract class PathAlgorithm : MonoBehaviour
     {
         public PathProps myProperties;
+
+
+        void Awake()
+        {
+            this.myProperties.myGraph = GetComponent<Grid>();
+        }
 
         /// <summary>
         /// Gets the path for an AI to follow
@@ -23,7 +30,7 @@ namespace PathFinder
         /// </summary>
         /// <param name="startTile"></param>
         /// <param name="endTile"></param>
-        public abstract Vector3[] CreatePath(Tile startTile, Tile endTile, bool simplified);
+        public abstract Vector3[] CreatePath(Node startTile, Node endTile, bool simplified);
 
         public abstract void StartFindPath(Vector3 startPos, Vector3 targetPos, DistanceHeuristic distanceType, bool simplified);
 
@@ -38,7 +45,10 @@ namespace PathFinder
     [Serializable]
     public class PathProps
     {
-        public Grid myGrid;
+        public Graph myGraph;
         public bool debug;
+        public PathMananger myMananger;
+        public int tentativeGScore;
+        public Stopwatch sw;
     }
 }

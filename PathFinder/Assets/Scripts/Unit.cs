@@ -22,7 +22,7 @@ public class Unit : MonoBehaviour
     void Start()
     {
         origDestination = target.position;
-        PathFinder.PathMananger.RequestPath(transform.position, target.position, distanceType, simplifyPath, OnPathFound);
+        PathFinder.PathManager.RequestPath(transform.position, target.position, distanceType, simplifyPath, OnPathFound);
     }                                                                                           
 
     void Update()
@@ -52,7 +52,7 @@ public class Unit : MonoBehaviour
     {
         if (distanceFromTarget < rerouteDistance)
         {
-            PathFinder.PathMananger.RequestPath(transform.position, target.position, distanceType, simplifyPath, OnPathFound);
+            PathFinder.PathManager.RequestPath(transform.position, target.position, distanceType, simplifyPath, OnPathFound);
             origDestination = target.position;
             yield return new WaitForSeconds(refreshRate);
         }

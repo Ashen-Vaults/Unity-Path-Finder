@@ -97,7 +97,7 @@ namespace PathFinder
                 {
                     wayPoints = CreatePath(startTile, targetTile, simplified);
                 }
-                this.myProperties.myMananger.DoneProcessing(wayPoints, success);
+                this.myProperties.myManager.DoneProcessing(wayPoints, success);
             //}
         }
 

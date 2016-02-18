@@ -8,12 +8,12 @@ namespace PathFinder
      /// <summary>
      /// Enemies will get a path from this
      /// </summary>
-    public class PathMananger : MonoBehaviour
+    public class PathManager : MonoBehaviour
     {
         Queue<PathRequest> PathQueue = new Queue<PathRequest>();
         PathRequest currentPath;
 
-        static PathMananger instance;
+        static PathManager instance;
 
 
         public PathAlgorithm myAlgorithm;

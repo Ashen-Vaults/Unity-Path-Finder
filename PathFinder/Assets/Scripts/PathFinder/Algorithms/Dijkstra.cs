@@ -60,7 +60,7 @@ namespace PathFinder
                 if (currentTile == targetTile)
                 {
                     this.myProperties.sw.Stop();
-                    print("DIJSKTRA: " + this.myProperties.sw.ElapsedMilliseconds + " ms");
+                  //  print("DIJSKTRA: " + this.myProperties.sw.ElapsedMilliseconds + " ms");
                     success = true;
                     break;
                 }
@@ -97,7 +97,7 @@ namespace PathFinder
             {
                 wayPoints = CreatePath(startTile, targetTile, simplified);
             }
-            this.myProperties.myMananger.DoneProcessing(wayPoints, success);
+            this.myProperties.myManager.DoneProcessing(wayPoints, success);
             //}
         }
 

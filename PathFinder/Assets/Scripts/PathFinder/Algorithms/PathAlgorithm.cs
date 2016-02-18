@@ -47,7 +47,7 @@ namespace PathFinder
     {
         public Graph myGraph;
         public bool debug;
-        public PathMananger myMananger;
+        public PathManager myManager;
         public int tentativeGScore;
         public Stopwatch sw;
     }

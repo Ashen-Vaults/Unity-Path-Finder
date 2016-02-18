@@ -5,7 +5,14 @@ using PathFinder;
 
 public abstract class Graph : MonoBehaviour
 {
-    protected int sizeX, sizeY;
+    public Transform levelFloor;
+
+    public Vector3 GraphSize
+    {
+        get { return  levelFloor.localScale * 10 ; }
+    }
+
+    public int sizeX, sizeY;
     public int Size { get { return sizeX * sizeY; } }
     protected virtual void CreateGraph() { }
     public abstract Node GetNode(Vector3 _pos);

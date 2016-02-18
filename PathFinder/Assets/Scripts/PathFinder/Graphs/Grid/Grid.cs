@@ -21,8 +21,9 @@ namespace PathFinder
         void Awake()
         {
             tileDiameter = tileSizes * 2;
-            sizeX = Mathf.RoundToInt(size.x / tileDiameter);
-            sizeY = Mathf.RoundToInt(size.y / tileDiameter);
+
+            sizeX = Mathf.RoundToInt(GraphSize.x / tileDiameter);
+            sizeY = Mathf.RoundToInt(GraphSize.z / tileDiameter);
             CreateGraph();    
         }
 
@@ -33,7 +34,7 @@ namespace PathFinder
         protected override void CreateGraph()
         {
             grid = new Node[sizeX, sizeY];
-            Vector3 bottomLeftCorner = transform.position - Vector3.right * size.x / 2 - Vector3.forward * size.y / 2;
+            Vector3 bottomLeftCorner = transform.position - Vector3.right * GraphSize.x / 2 - Vector3.forward * GraphSize.z / 2;
 
 
             for(int x=0; x < sizeX; x++ )
@@ -56,8 +57,8 @@ namespace PathFinder
         /// <returns></returns>
         public override Node GetNode(Vector3 _pos)
         {
-            float x = (_pos.x + size.x / 2) / size.x;
-            float y = (_pos.z + size.y / 2) / size.y;
+            float x = (_pos.x + GraphSize.x / 2) / size.x;
+            float y = (_pos.z + GraphSize.z / 2) / size.y;
             x = Mathf.Clamp01(x);
             y = Mathf.Clamp01(y);
 
@@ -104,7 +105,7 @@ namespace PathFinder
                 foreach (Node t in grid)
                 {
                     Gizmos.color = (t.walkable) ? Color.white : Color.red;
-                    Gizmos.DrawWireCube(t.myWorldPosition, Vector3.one * (tileDiameter-0.1f));
+                    Gizmos.DrawCube(t.myWorldPosition, Vector3.one * (tileDiameter-0.1f));
                 }
             }      
         }
